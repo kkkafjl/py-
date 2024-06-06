@@ -32,8 +32,9 @@ print(arr_class_info_orig[:5, :])
 print(arr_sch_info_orig.shape)
 print(arr_sch_info_orig[:5, :])
 
-arr_after_stu_info = numpy.unique(arr_stu_info_orig, axis=1)
-arr_after_sch_info = numpy.unique(arr_sch_info_orig, axis=1)
+arr_after_stu_info = numpy.vstack((arr_stu_info_orig[0, :], numpy.unique(arr_stu_info_orig[1:, :], axis=0)))
+
+arr_after_sch_info = numpy.vstack((arr_sch_info_orig[0, :], numpy.unique(arr_sch_info_orig[1:, :], axis=0)))
 
 numpy.savetxt(fname='去重学生信息表.csv',
               X=arr_after_stu_info,
@@ -52,29 +53,34 @@ numpy.savetxt(fname='去除学生成绩表中存在的空白字符.csv',
               fmt='%s',
               encoding='utf-8')
 numpy.savetxt(fname='学生基本信息表.csv',
-              X=arr_after_sch_score[:, :3],
+              X=arr_after_sch_score[:, :4],
               delimiter=' ',
               fmt='%s',
               encoding='utf-8')
 numpy.savetxt(fname='学号成绩表.csv',
-              X=arr_after_sch_score.take(indices=[0, -1], axis=1),
+              X=arr_after_sch_score.take(indices=[list(arr_after_sch_score[0,:]).index('学号'),
+                                                  list(arr_after_sch_score[0,:]).index('入学成绩')], axis=1),
               delimiter=' ',
               fmt='%s',
               encoding='utf-8')
 numpy.savetxt(fname='学生基本信息表2.csv',
-              X=arr_after_stu_info.take(indices=[2, 1, 3, 4], axis=1),
+              X=arr_after_stu_info.take(indices=[list(arr_after_stu_info[0,:]).index('学号'),
+                                                 list(arr_after_stu_info[0,:]).index('姓名'),
+                                                 list(arr_after_stu_info[0,:]).index('性别'),
+                                                 list(arr_after_stu_info[0,:]).index('所属班级编号')], axis=1),
               delimiter=' ',
               fmt='%s',
               encoding='utf-8')
 numpy.savetxt(fname='入学日期表.csv',
-              X=arr_after_stu_info.take(indices=[2, 0], axis=1),
+              X=arr_after_stu_info.take(indices=[list(arr_after_stu_info[0,:]).index('学号'),
+                                                 list(arr_after_stu_info[0,:]).index('入学日期')], axis=1),
               delimiter=' ',
               fmt='%s',
               encoding='utf-8')
 get_num_score_max = numpy.argmax(arr_stu_score_orig[1:, -1])
 print(f"入学最高分对应学生信息:{arr_stu_score_orig[get_num_score_max + 1]}")
 count_gril_boy = {}
-for char in arr_after_stu_info[1:, -2]:
+for char in arr_after_stu_info[1:, 2]:
     if char in count_gril_boy.keys():
         count_gril_boy[char] += 1
     else:
